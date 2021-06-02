@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import Chip from '@material-ui/core/Chip'
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -55,7 +56,9 @@ function ProductsTable({
   const classes = useStyles()
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
-  const [selected, setSelected] = React.useState<string[]>([])
+
+  const [isCompared, setIsCompared] = React.useState(false)
+  const [selected, setSelected] = React.useState<number[]>([])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -66,9 +69,9 @@ function ProductsTable({
     setPage(0)
   }
 
-  const handleSelection = (name: string) => (event: React.MouseEvent<unknown>) => {
+  const handleSelection = (name: number) => (event: React.MouseEvent<unknown>) => {
     const selectedIndex = selected.indexOf(name)
-    let newSelected: string[] = []
+    let newSelected: number[] = []
 
     if (selectedIndex === -1) {
       newSelected = [...selected, name]
@@ -83,15 +86,21 @@ function ProductsTable({
     setSelected(newSelected)
   }
 
+  const clearSelection = () => {
+    setSelected([])
+    setIsCompared(false)
+  }
+
   const currentTableStart = page * rowsPerPage
   const currentTableEnd = page * rowsPerPage + rowsPerPage
   const isSelection = selected.length > 0
   const isComparable = selected.length == 2
+  const productsToCompare = products.filter(({ id }) => selected.includes(id)).slice(0, 2)
   return (
     <Paper className={classes.root}>
       <Toolbar>
         <Box className={classes.clearBox}>
-          <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => setSelected([])}>
+          <IconButton edge="start" color="inherit" aria-label="menu" onClick={clearSelection}>
             <ClearAllOutlinedIcon />
           </IconButton>
           {isSelection && (
@@ -104,6 +113,7 @@ function ProductsTable({
           color="inherit"
           disabled={!isComparable}
           className={isComparable ? classes.buttonActive : classes.buttonDisabled}
+          onClick={() => setIsCompared(true)}
         >
           {isComparable ? 'Compare Products' : 'Select 2 Products to Compare'}
         </Button>
@@ -118,14 +128,30 @@ function ProductsTable({
                 </TableCell>
               ))}
             </TableRow>
+            {isCompared &&
+              isComparable &&
+              productProperties.map(({ name }) => (
+                <TableCell align="center" className={classes.cell} key={name}>
+                  {name == 'name' ? (
+                    `${productsToCompare[0].name} vs ${productsToCompare[1].name}`
+                  ) : name == 'tags' ? (
+                    `${productsToCompare[0].tags?.join('') ?? '-'}`
+                  ) : (
+                    <>
+                      <Chip size="small" label={productsToCompare[0][name] ?? '-'} />
+                      <Chip size="small" label={productsToCompare[1][name] ?? '-'} />
+                    </>
+                  )}
+                </TableCell>
+              ))}
           </TableHead>
           <TableBody>
             {products.slice(currentTableStart, currentTableEnd).map((product) => (
               <TableRow
                 hover
                 key={product.id}
-                onClick={handleSelection(product.name)}
-                selected={selected.includes(product.name)}
+                onClick={handleSelection(product.id)}
+                selected={selected.includes(product.id)}
               >
                 {productProperties.map(({ name }) => (
                   <TableCell align="center" className={classes.cell} key={`${product}-${name}`}>
@@ -148,8 +174,6 @@ function ProductsTable({
       />
     </Paper>
   )
-
-  // TODO Feature 2: Compare two products
 }
 
 export default ProductsTable
