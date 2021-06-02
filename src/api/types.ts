@@ -3,7 +3,7 @@ export type ProductId = number
 interface ProductNutritionDTO {
   energy: number
   protein: number
-  saturatedFat: number
+  fat: number
   carbohydrate: number
   sugars: number
   dietaryFibre: number
