@@ -1,6 +1,4 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Chip from '@material-ui/core/Chip'
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -16,35 +14,8 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import TablePagination from '@material-ui/core/TablePagination'
 import type { Product, ProductPropertyEntryDTO } from '@/api/types'
-
-const useStyles = makeStyles({
-  root: {
-    width: '100%'
-  },
-  container: {
-    maxHeight: 440
-  },
-  cell: {
-    minWidth: 130
-  },
-  clearBox: {
-    display: 'flex',
-    flexGrow: 1
-  },
-  title: {
-    alignSelf: 'center',
-    marginLeft: 24
-  },
-  buttonDisabled: {
-    padding: '.5rem 1rem',
-    backgroundColor: '#ffffff4d'
-  },
-  buttonActive: {
-    padding: '.5rem 1rem',
-    backgroundColor: '#e0e0e0',
-    color: '#000000de'
-  }
-})
+import { useStyles } from './styles'
+import { ProductCompareRow } from './product-compare-row'
 
 function ProductsTable({
   productProperties,
@@ -128,22 +99,9 @@ function ProductsTable({
                 </TableCell>
               ))}
             </TableRow>
-            {isCompared &&
-              isComparable &&
-              productProperties.map(({ name }) => (
-                <TableCell align="center" className={classes.cell} key={name}>
-                  {name == 'name' ? (
-                    `${productsToCompare[0].name} vs ${productsToCompare[1].name}`
-                  ) : name == 'tags' ? (
-                    `${productsToCompare[0].tags?.join('') ?? '-'}`
-                  ) : (
-                    <>
-                      <Chip size="small" label={productsToCompare[0][name] ?? '-'} />
-                      <Chip size="small" label={productsToCompare[1][name] ?? '-'} />
-                    </>
-                  )}
-                </TableCell>
-              ))}
+            {isCompared && isComparable && (
+              <ProductCompareRow productProperties={productProperties} products={productsToCompare} />
+            )}
           </TableHead>
           <TableBody>
             {products.slice(currentTableStart, currentTableEnd).map((product) => (
