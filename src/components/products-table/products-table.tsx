@@ -40,7 +40,7 @@ function ProductsTable({
     setPage(0)
   }
 
-  const handleSelection = (name: number) => (event: React.MouseEvent<unknown>) => {
+  const handleSelection = (name: number) => () => {
     const selectedIndex = selected.indexOf(name)
     let newSelected: number[] = []
 
@@ -71,7 +71,7 @@ function ProductsTable({
     <Paper className={classes.root}>
       <Toolbar>
         <Box className={classes.clearBox}>
-          <IconButton edge="start" color="inherit" aria-label="menu" onClick={clearSelection}>
+          <IconButton edge="start" color="inherit" aria-label="clear selection" onClick={clearSelection}>
             <ClearAllOutlinedIcon />
           </IconButton>
           {isSelection && (
@@ -107,7 +107,10 @@ function ProductsTable({
             {products.slice(currentTableStart, currentTableEnd).map((product) => (
               <TableRow
                 hover
+                role="checkbox"
+                aria-checked={selected.includes(product.id)}
                 key={product.id}
+                tabIndex={-1}
                 onClick={handleSelection(product.id)}
                 selected={selected.includes(product.id)}
               >

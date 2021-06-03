@@ -1,6 +1,7 @@
 import React from 'react'
 import Chip from '@material-ui/core/Chip'
 import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
 import type { Product, ProductPropertyEntryDTO } from '@/api/types'
 import { useStyles } from './styles'
 
@@ -15,7 +16,7 @@ export function ProductCompareRow({
   const productB = products[1]
 
   return (
-    <>
+    <TableRow>
       {productProperties.map(({ name: property }) => {
         if (!productA[property] && !productB[property]) {
           return <ProductCell key={property} />
@@ -47,7 +48,7 @@ export function ProductCompareRow({
           </ProductCell>
         )
       })}
-    </>
+    </TableRow>
   )
 }
 
