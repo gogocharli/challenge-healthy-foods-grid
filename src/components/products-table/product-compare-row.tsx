@@ -12,8 +12,7 @@ export function ProductCompareRow({
   productProperties: ProductPropertyEntryDTO[]
   products: Product[]
 }) {
-  const productA = products[0]
-  const productB = products[1]
+  const [productA, productB] = products
 
   return (
     <TableRow>
